@@ -1,0 +1,104 @@
+#include <Wire.h> // optional but fine to leave for I2C safety
+// ================== Motor Driver (L298N)
+==================
+#define ENA 10
+#define IN1 7
+#define IN2 6
+#define ENB 11
+#define IN3 5
+#define IN4 4
+// ================== Ultrasonic Sensor
+==================
+#define TRIG 9
+#define ECHO 8
+// ================== Variables ==================
+long duration;
+int distance;
+5
+void setup() {
+// Motor setup
+pinMode(ENA, OUTPUT);
+pinMode(IN1, OUTPUT);
+pinMode(IN2, OUTPUT);
+pinMode(ENB, OUTPUT);
+pinMode(IN3, OUTPUT);
+pinMode(IN4, OUTPUT);
+1
+6
+3
+// Ultrasonic setup
+pinMode(TRIG, OUTPUT);
+pinMode(ECHO, INPUT);
+Serial.begin(9600); // Debugging
+}
+4
+2int getDistance() {
+digitalWrite(TRIG, LOW);
+delayMicroseconds(2);
+digitalWrite(TRIG, HIGH);
+delayMicroseconds(10);
+digitalWrite(TRIG, LOW);
+duration = pulseIn(ECHO, HIGH);
+distance = duration * 0.034 / 2;
+return distance;
+}
+void loop() {
+distance = getDistance();
+Serial.print("Distance: ");
+Serial.print(distance);
+Serial.println(" cm");
+// ===== Movement Logic =====
+if (distance > 20) {
+forward();
+} else {
+stopMotors();
+delay(500);
+backward();
+delay(1000);
+stopMotors();
+delay(300);
+turnRight();
+delay(700);
+stopMotors();
+delay(300);
+}
+}//================== Movement Functions ==================
+void forward() {
+digitalWrite(IN1, HIGH);
+digitalWrite(IN2, LOW);
+digitalWrite(IN3, HIGH);
+digitalWrite(IN4, LOW);
+analogWrite(ENA, 220);
+analogWrite(ENB, 220);
+}
+void backward() {
+digitalWrite(IN1, LOW);
+digitalWrite(IN2, HIGH);
+digitalWrite(IN3, LOW);
+digitalWrite(IN4, HIGH);
+analogWrite(ENA, 220);
+analogWrite(ENB, 220);
+}
+void turnLeft() {
+digitalWrite(IN1, LOW);
+digitalWrite(IN2, HIGH);
+digitalWrite(IN3, HIGH);
+digitalWrite(IN4, LOW);
+analogWrite(ENA, 220);
+analogWrite(ENB, 220);
+}
+void turnRight() {
+digitalWrite(IN1, HIGH);
+digitalWrite(IN2, LOW);
+digitalWrite(IN3, LOW);
+digitalWrite(IN4, HIGH);
+analogWrite(ENA, 220);
+analogWrite(ENB, 220);
+}
+void stopMotors() {
+digitalWrite(IN1, LOW);
+digitalWrite(IN2, LOW);
+digitalWrite(IN3, LOW);
+digitalWrite(IN4, LOW);
+analogWrite(ENA, 0);
+analogWrite(ENB, 0);
