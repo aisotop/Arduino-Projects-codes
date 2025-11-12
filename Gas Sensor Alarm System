@@ -1,0 +1,36 @@
+// Pin definitions
+const int gasPin = A0;     // Analog pin connected to MQ sensor
+const int ledPin = 8;      // LED output
+const int buzzerPin = 3;   // Buzzer output
+
+// Threshold for gas detection (adjust experimentally)
+const int gasThreshold = 500;  
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(gasPin, INPUT);
+  Serial.begin(9600);  // For debugging
+}
+
+void loop() {
+  // Read analog value from gas sensor
+  int gasValue = analogRead(gasPin);
+
+  // Print value to serial monitor
+  Serial.print("Gas sensor value: ");
+  Serial.println(gasValue);
+
+  // Check if value exceeds threshold
+  if (gasValue > gasThreshold) {
+    // Gas detected → turn on LED and buzzer
+    digitalWrite(ledPin, HIGH);
+    digitalWrite(buzzerPin, HIGH);
+  } else {
+    // Safe → turn off LED and buzzer
+    digitalWrite(ledPin, LOW);
+    digitalWrite(buzzerPin, LOW);
+  }
+
+  delay(500); // small delay for stability
+}
